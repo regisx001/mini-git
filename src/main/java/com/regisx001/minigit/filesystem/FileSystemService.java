@@ -42,6 +42,14 @@ public class FileSystemService {
         }
     }
 
+    public void writeBytes(Path path, byte[] data) {
+        try {
+            Files.write(path, data);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write bytes: " + path, e);
+        }
+    }
+
     public boolean exists(Path path) {
         return Files.exists(path);
     }
