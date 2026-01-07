@@ -1,15 +1,13 @@
 package com.regisx001.minigit;
 
-import com.regisx001.minigit.core.commands.InitCommand;
+import com.regisx001.minigit.cli.CommandParser;
+import com.regisx001.minigit.core.Command;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        new InitCommand().execute();
+public class App {
+    public static void main(String[] args) {
+        CommandParser parser = new CommandParser();
+        Command command = parser.parse(args);
+        command.execute();
+
     }
 }

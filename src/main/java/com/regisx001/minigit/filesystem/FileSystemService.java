@@ -3,6 +3,7 @@ package com.regisx001.minigit.filesystem;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import com.regisx001.minigit.exceptions.ExistingRepositoryException;
 
@@ -29,6 +30,14 @@ public class FileSystemService {
             Files.writeString(path, content);
         } catch (IOException e) {
             throw new RuntimeException("Failed to write file: " + path, e);
+        }
+    }
+
+    public List<String> readLines(Path path) {
+        try {
+            return Files.readAllLines(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read file: " + path, e);
         }
     }
 
