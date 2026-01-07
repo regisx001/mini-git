@@ -1,12 +1,24 @@
 package com.regisx001.minigit.core.commands;
 
-import com.regisx001.minigit.core.Command;
+import java.nio.file.Path;
 
-public class InitCommand implements Command{
+import com.regisx001.minigit.core.Command;
+import com.regisx001.minigit.filesystem.FileSystemService;
+
+public class InitCommand implements Command {
+
+    private final FileSystemService fs = new FileSystemService();
 
     @Override
     public void execute() {
-        System.out.println("Intializing minigit repository ...");
+        Path repoDir = Path.of(".minigit");
+
+        if (fs.exists(repoDir)) {
+            throw new RuntimeException("MiniGit repository already exists.");
+        }
+
+        System.out.println("Repository does not exist. Ready to initialize.");
+
     }
-    
+
 }
