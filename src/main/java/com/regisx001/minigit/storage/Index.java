@@ -19,4 +19,8 @@ public class Index {
         return fs.readLines(indexFile);
     }
 
+    public void writeAll(List<String> lines) {
+        fs.writeLines(indexFile, lines);
+    }
+
 }

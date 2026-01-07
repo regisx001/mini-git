@@ -37,11 +37,21 @@ public class FileSystemService {
         try {
             return Files.readAllLines(path);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to read file: " + path, e);
+            throw new RuntimeException(
+                    "Failed to read file: " + path, e);
         }
     }
 
     public boolean exists(Path path) {
         return Files.exists(path);
     }
+
+    public void writeLines(Path path, List<String> lines) {
+        try {
+            Files.write(path, lines);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write file: " + path, e);
+        }
+    }
+
 }
