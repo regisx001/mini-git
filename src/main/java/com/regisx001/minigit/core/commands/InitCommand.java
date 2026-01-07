@@ -11,11 +11,21 @@ public class InitCommand implements Command {
 
     @Override
     public void execute() {
-        Path repoDir = Path.of(".minigit");
+        Path repo = Path.of(".minigit");
 
-        if (fs.exists(repoDir)) {
+        if (fs.exists(repo)) {
             throw new RuntimeException("MiniGit repository already exists.");
         }
+
+        fs.createDirectory(repo);
+        fs.createDirectory(repo.resolve("objects"));
+        fs.createDirectory(repo.resolve("refs/heads"));
+
+        fs.createFile(repo.resolve("index"));
+        fs.createFile(repo.resolve("HEAD"));
+        fs.writeFile(repo.resolve("HEAD"), "refs/heads/main");
+
+        fs.createFile(repo.resolve("refs/heads/main"));
 
         System.out.println("Repository does not exist. Ready to initialize.");
 

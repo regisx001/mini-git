@@ -16,6 +16,22 @@ public class FileSystemService {
         }
     }
 
+    public void createFile(Path path) {
+        try {
+            Files.createFile(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create file: " + path, e);
+        }
+    }
+
+    public void writeFile(Path path, String content) {
+        try {
+            Files.writeString(path, content);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write file: " + path, e);
+        }
+    }
+
     public boolean exists(Path path) {
         return Files.exists(path);
     }
