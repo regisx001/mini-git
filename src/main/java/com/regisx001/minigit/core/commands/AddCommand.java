@@ -3,7 +3,7 @@ package com.regisx001.minigit.core.commands;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Map;
 
 import com.regisx001.minigit.core.Command;
 import com.regisx001.minigit.core.Repository;
@@ -34,7 +34,11 @@ public class AddCommand implements Command {
             store.store(blob.hash(), blob.serialize());
 
             Index index = new Index(repo.indexFile(), fs);
-            index.writeAll(List.of(filePath + " " + blob.hash()));
+
+            Map<String, String> entries = index.readEntries();
+            entries.put(filePath, blob.hash());
+
+            index.writeEntries(entries);
 
             System.out.println("Added " + filePath);
         } catch (IOException e) {
