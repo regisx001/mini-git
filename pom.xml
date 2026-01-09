@@ -37,6 +37,17 @@
                 <version>3.11.0</version>
             </plugin>
 
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>0.10.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <mainClass>com.regisx001.minigit.App</mainClass>
+                    <imageName>minigit</imageName>
+                </configuration>
+            </plugin>
+
             <!-- Runnable JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
