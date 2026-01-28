@@ -5,6 +5,7 @@ import com.regisx001.minigit.core.commands.AddCommand;
 import com.regisx001.minigit.core.commands.CommitCommand;
 import com.regisx001.minigit.core.commands.InitCommand;
 import com.regisx001.minigit.core.commands.LogCommand;
+import com.regisx001.minigit.core.commands.StatusCommand;
 
 public class CommandParser {
 
@@ -35,6 +36,10 @@ public class CommandParser {
 
         if (command.equals("log")) {
             return new LogCommand();
+        }
+
+        if (command.equals("status")) {
+            return new StatusCommand();
         }
 
         throw new RuntimeException("Unknown command: " + command);
