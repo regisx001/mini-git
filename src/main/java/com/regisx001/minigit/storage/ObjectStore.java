@@ -14,6 +14,14 @@ public class ObjectStore {
         this.fs = fs;
     }
 
+    public byte[] read(String hash) {
+        String dir = hash.substring(0, 2);
+        String file = hash.substring(2);
+
+        Path objectFile = objectsDir.resolve(dir).resolve(file);
+        return fs.readBytes(objectFile);
+    }
+
     public void store(String hash, byte[] data) {
         String dir = hash.substring(0, 2);
         String file = hash.substring(2);

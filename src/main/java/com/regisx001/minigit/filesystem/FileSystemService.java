@@ -62,4 +62,12 @@ public class FileSystemService {
         }
     }
 
+    public byte[] readBytes(Path path) {
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read bytes: " + path, e);
+        }
+    }
+
 }
