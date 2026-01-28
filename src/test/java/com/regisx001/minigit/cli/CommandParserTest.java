@@ -9,6 +9,7 @@ import com.regisx001.minigit.core.commands.AddCommand;
 import com.regisx001.minigit.core.commands.CommitCommand;
 import com.regisx001.minigit.core.commands.InitCommand;
 import com.regisx001.minigit.core.commands.LogCommand;
+import com.regisx001.minigit.core.commands.StatusCommand;
 
 public class CommandParserTest {
 
@@ -38,6 +39,13 @@ public class CommandParserTest {
         CommandParser parser = new CommandParser();
         Command cmd = parser.parse(new String[] { "log" });
         assertTrue(cmd instanceof LogCommand);
+    }
+
+    @Test
+    public void testParseStatus() {
+        CommandParser parser = new CommandParser();
+        Command cmd = parser.parse(new String[] { "status" });
+        assertTrue(cmd instanceof StatusCommand);
     }
 
     @Test
