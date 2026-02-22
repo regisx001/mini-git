@@ -10,7 +10,11 @@ permissions:
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-latest
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v4
@@ -25,6 +29,7 @@ jobs:
     
     - name: Extract version from pom.xml
       id: get_version
+      shell: bash
       run: |
         VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -36,11 +41,23 @@ jobs:
     - name: Build Native Image
       run: mvn -Pnative native:compile --file pom.xml
     
+    - name: Rename binary for OS
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          mv target/minigit.exe target/minigit-windows.exe
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          mv target/minigit target/minigit-macos
+        else
+          mv target/minigit target/minigit-linux
+        fi
+        
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ steps.get_version.outputs.version }}
+        append_body: true
         body: |
           ## MiniGit Release ${{ steps.get_version.outputs.version }}
           
@@ -49,10 +66,15 @@ jobs:
           ### Installation
           Download the native binary for your platform or the JAR file:
           
-          **Native Binary (Linux):**
+          **Native Binary (Linux/macOS):**
           ```bash
-          chmod +x minigit
-          ./minigit <command>
+          chmod +x minigit-<os>
+          ./minigit-<os> <command>
+          ```
+          
+          **Native Binary (Windows):**
+          ```cmd
+          minigit-windows.exe <command>
           ```
           
           **JAR File:**
@@ -68,6 +90,8 @@ jobs:
           - `status` - Check repository status
         files: |
           target/minigit-${{ steps.get_version.outputs.version }}.jar
-          target/minigit
+          target/minigit-linux
+          target/minigit-macos
+          target/minigit-windows.exe
         draft: false
         prerelease: false
