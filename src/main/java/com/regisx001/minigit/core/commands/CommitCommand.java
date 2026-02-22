@@ -1,7 +1,5 @@
 package com.regisx001.minigit.core.commands;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +12,7 @@ import com.regisx001.minigit.domain.TreeEntry;
 import com.regisx001.minigit.filesystem.FileSystemService;
 import com.regisx001.minigit.storage.Index;
 import com.regisx001.minigit.storage.ObjectStore;
+import com.regisx001.minigit.storage.RefStore;
 
 public class CommitCommand implements Command {
     private final String message;
@@ -42,27 +41,21 @@ public class CommitCommand implements Command {
         ObjectStore store = new ObjectStore(repo.objectsDir(), fs);
         store.store(tree.hash(), tree.serialize());
 
-        try {
-            String parent = Files.readString(repo.mainBranch()).trim();
+        RefStore refs = new RefStore(repo, fs);
+        String parent = refs.readCurrentCommit();
 
-            if (parent.isEmpty())
-                parent = null;
+        Commit commit = new Commit(
+                tree.hash(),
+                parent,
+                "You",
+                System.currentTimeMillis() / 1000,
+                message);
 
-            Commit commit = new Commit(
-                    tree.hash(),
-                    parent,
-                    "You",
-                    System.currentTimeMillis() / 1000,
-                    message);
+        store.store(commit.hash(), commit.serialize());
+        refs.updateCurrentCommit(commit.hash());
+        index.writeEntries(Map.of());
 
-            store.store(commit.hash(), commit.serialize());
-            fs.writeFile(repo.mainBranch(), commit.hash());
-            index.writeEntries(Map.of());
-
-            System.out.println("Committed: " + commit.hash());
-        } catch (IOException ex) {
-            System.getLogger(CommitCommand.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
+        System.out.println("Committed: " + commit.hash());
 
     }
 
