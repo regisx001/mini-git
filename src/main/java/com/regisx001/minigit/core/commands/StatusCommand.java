@@ -14,6 +14,7 @@ import com.regisx001.minigit.core.RepositoryLoader;
 import com.regisx001.minigit.filesystem.FileSystemService;
 import com.regisx001.minigit.storage.Index;
 import com.regisx001.minigit.storage.ObjectStore;
+import com.regisx001.minigit.storage.RefStore;
 
 public class StatusCommand implements Command {
 
@@ -27,9 +28,10 @@ public class StatusCommand implements Command {
 
             Map<String, String> indexEntries = index.readEntries();
             Set<String> committedFiles = new HashSet<>();
+            RefStore refs = new RefStore(repo, fs);
+            String head = refs.readCurrentCommit();
 
-            String head = Files.readString(repo.mainBranch()).trim();
-            if (!head.isEmpty()) {
+            if (head != null) {
                 String commitText = new String(store.read(head), StandardCharsets.UTF_8);
                 String treeHash = commitText.split("tree ")[1].split("\n")[0];
                 String treeText = new String(store.read(treeHash), StandardCharsets.UTF_8);
