@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  build-binaries:
     name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -44,20 +44,52 @@ jobs:
     - name: Rename binary for OS
       shell: bash
       run: |
+        VERSION=${{ steps.get_version.outputs.version }}
         if [ "$RUNNER_OS" == "Windows" ]; then
-          mv target/minigit.exe target/minigit-windows.exe
+          mv target/minigit.exe target/minigit-${VERSION}-windows.exe
         elif [ "$RUNNER_OS" == "macOS" ]; then
-          mv target/minigit target/minigit-macos
+          mv target/minigit target/minigit-${VERSION}-macos
         else
-          mv target/minigit target/minigit-linux
+          mv target/minigit target/minigit-${VERSION}-linux
         fi
+
+    - name: Upload Native Binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: minigit-binary-${{ matrix.os }}
+        path: target/minigit-${{ steps.get_version.outputs.version }}-*
+        
+    - name: Upload JAR
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        name: minigit-jar
+        path: target/minigit-${{ steps.get_version.outputs.version }}.jar
+
+  create-release:
+    needs: build-binaries
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Extract version from pom.xml
+      id: get_version
+      shell: bash
+      run: |
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: release-artifacts
+        merge-multiple: true
         
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
         name: Release ${{ steps.get_version.outputs.version }}
-        append_body: true
         body: |
           ## MiniGit Release ${{ steps.get_version.outputs.version }}
           
@@ -68,13 +100,13 @@ jobs:
           
           **Native Binary (Linux/macOS):**
           ```bash
-          chmod +x minigit-<os>
-          ./minigit-<os> <command>
+          chmod +x minigit-${{ steps.get_version.outputs.version }}-<os>
+          ./minigit-${{ steps.get_version.outputs.version }}-<os> <command>
           ```
           
           **Native Binary (Windows):**
           ```cmd
-          minigit-windows.exe <command>
+          minigit-${{ steps.get_version.outputs.version }}-windows.exe <command>
           ```
           
           **JAR File:**
@@ -88,10 +120,6 @@ jobs:
           - `commit -m "message"` - Create a commit
           - `log` - View commit history
           - `status` - Check repository status
-        files: |
-          target/minigit-${{ steps.get_version.outputs.version }}.jar
-          target/minigit-linux
-          target/minigit-macos
-          target/minigit-windows.exe
+        files: release-artifacts/*
         draft: false
         prerelease: false

@@ -4,7 +4,7 @@
     <groupId>com.regisx001.minigit</groupId>
     <artifactId>minigit</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
 
     <name>MiniGit</name>
     <description>Educational Git-like version control system</description>
