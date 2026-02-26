@@ -10,12 +10,14 @@ import com.regisx001.minigit.core.Repository;
 import com.regisx001.minigit.core.RepositoryLoader;
 import com.regisx001.minigit.domain.Blob;
 import com.regisx001.minigit.filesystem.FileSystemService;
+import com.regisx001.minigit.storage.IgnoreService;
 import com.regisx001.minigit.storage.Index;
 import com.regisx001.minigit.storage.ObjectStore;
 
 public class AddCommand implements Command {
 
     private final String filePath;
+    private final IgnoreService ignoreService = new IgnoreService();
 
     public AddCommand(String filePath) {
         this.filePath = filePath;
@@ -23,6 +25,11 @@ public class AddCommand implements Command {
 
     @Override
     public void execute() {
+        if (ignoreService.isIgnored(filePath)) {
+            System.out.println("The file '" + filePath + "' is ignored by .minigitignore");
+            return;
+        }
+
         try {
             Repository repo = new RepositoryLoader().load();
             FileSystemService fs = new FileSystemService();

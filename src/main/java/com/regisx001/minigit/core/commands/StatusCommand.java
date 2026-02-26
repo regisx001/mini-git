@@ -13,14 +13,17 @@ import com.regisx001.minigit.core.Command;
 import com.regisx001.minigit.core.Repository;
 import com.regisx001.minigit.core.RepositoryLoader;
 import com.regisx001.minigit.filesystem.FileSystemService;
+import com.regisx001.minigit.storage.IgnoreService;
 import com.regisx001.minigit.storage.Index;
 import com.regisx001.minigit.storage.ObjectStore;
 import com.regisx001.minigit.storage.RefStore;
 
 public class StatusCommand implements Command {
+    IgnoreService ignoreService = new IgnoreService();
 
     @Override
     public void execute() {
+
         try {
             Repository repo = new RepositoryLoader().load();
             FileSystemService fs = new FileSystemService();
@@ -44,14 +47,16 @@ public class StatusCommand implements Command {
 
             System.out.println("Staged files:");
             indexEntries.keySet().forEach(f -> {
-                if (!committedFiles.contains(f)) {
+                if (!ignoreService.isIgnored(f) && !committedFiles.contains(f)) {
                     System.out.println("  " + f);
                 }
             });
 
             System.out.println("\nUntracked files:");
             workingFiles.forEach(f -> {
-                if (!indexEntries.containsKey(f) && !committedFiles.contains(f)) {
+                if (!ignoreService.isIgnored(f)
+                        && !indexEntries.containsKey(f)
+                        && !committedFiles.contains(f)) {
                     System.out.println("  " + f);
                 }
             });
@@ -95,12 +100,17 @@ public class StatusCommand implements Command {
                     continue;
                 }
 
+                String fullPath = prefix + path.getFileName().toString();
+                if (ignoreService.isIgnored(fullPath)) {
+                    continue;
+                }
+
                 if (Files.isDirectory(path)) {
                     collectWorkingFiles(path,
-                            prefix + path.getFileName().toString() + "/",
+                            fullPath + "/",
                             files);
                 } else if (Files.isRegularFile(path)) {
-                    files.add(prefix + path.getFileName().toString());
+                    files.add(fullPath);
                 }
             }
         }
