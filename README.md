@@ -17,6 +17,8 @@ MiniGit supports essential version control operations:
 - **Committing** - Create immutable snapshots of repository state
 - **History Viewing** - Browse commit history and changes
 - **Status Checking** - View repository status and staged changes
+- **Ignore Files** - Support for `.minigitignore` to exclude files and directories
+- **Native Binaries** - Cross-platform native executables via GraalVM
 
 ## Architecture
 
@@ -80,36 +82,54 @@ mvn clean compile
 mvn package
 ```
 
+4. (Optional) Build a native executable (requires GraalVM):
+```bash
+mvn native:compile
+```
+
 ### Usage
+
+You can run MiniGit using the compiled JAR or the native binary (if built).
+
+Using the JAR:
+```bash
+alias minigit="java -jar target/minigit-0.1.4.jar"
+```
+
+Using the native binary:
+```bash
+alias minigit="./target/minigit"
+```
 
 Initialize a new repository:
 ```bash
-java -jar target/minigit-0.1.0.jar init
+minigit init
 ```
 
 Add files to staging:
 ```bash
-java -jar target/minigit-0.1.0.jar add <filename>
+minigit add <filename>
 ```
 
 Create a commit:
 ```bash
-java -jar target/minigit-0.1.0.jar commit -m "Your commit message"
+minigit commit -m "Your commit message"
 ```
 
 View commit history:
 ```bash
-java -jar target/minigit-0.1.0.jar log
+minigit log
 ```
 
 Check repository status:
 ```bash
-java -jar target/minigit-0.1.0.jar status
+minigit status
 ```
 
 ## Project Structure
 
 ```
+.github/workflows/                 # CI/CD pipelines (Maven, Release)
 src/
 ├── main/java/com/regisx001/minigit/
 │   ├── App.java                    # Main entry point
@@ -117,6 +137,8 @@ src/
 │   │   └── CommandParser.java      # CLI argument parsing
 │   ├── core/
 │   │   ├── Command.java            # Command interface
+│   │   ├── Repository.java         # Repository state
+│   │   ├── RepositoryLoader.java   # Repository initialization
 │   │   └── commands/               # Command implementations
 │   ├── domain/                     # Git object model
 │   │   ├── Blob.java              # File content objects
@@ -125,18 +147,22 @@ src/
 │   │   └── TreeEntry.java         # Tree entries
 │   ├── filesystem/
 │   │   └── FileSystemService.java # Low-level file operations
-│   └── storage/                   # Persistence layer
-│       ├── Index.java             # Staging area management
-│       ├── ObjectStore.java       # Object storage/retrieval
-│       └── RefStore.java          # Reference management
-└── test/java/com/regisx001/minigit/
-    └── AppTest.java               # Unit tests
+│   ├── storage/                   # Persistence layer
+│   │   ├── IgnoreService.java     # .minigitignore parsing
+│   │   ├── Index.java             # Staging area management
+│   │   ├── ObjectStore.java       # Object storage/retrieval
+│   │   ├── RefStore.java          # Reference management
+│   │   └── TreeBuilder.java       # Tree object generation
+│   └── utils/
+│       └── HashUtil.java          # SHA-1 hashing
+└── test/java/com/regisx001/minigit/ # Comprehensive JUnit 5 test suite
 
 analysis/                          # Design documentation
 ├── 01-introduction.md
 ├── 02-architecture-overview.md
 ├── 03-repository-structure-data-model.md
 └── 04-uml-analysis.md
+ROADMAP.md                         # Project roadmap and goals
 ```
 
 ## Understanding Git Internals
