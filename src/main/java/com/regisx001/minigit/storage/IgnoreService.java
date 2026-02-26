@@ -36,7 +36,7 @@ public class IgnoreService {
             if (isRoot) {
                 normalizedPattern = pattern.substring(1);
             }
-            
+
             if (normalizedPattern.endsWith("/")) {
                 normalizedPattern = normalizedPattern.substring(0, normalizedPattern.length() - 1);
             }
@@ -51,10 +51,10 @@ public class IgnoreService {
                     return true;
                 }
             } else {
-                if (path.equals(normalizedPattern) || 
-                    path.startsWith(normalizedPattern + "/") || 
-                    path.endsWith("/" + normalizedPattern) || 
-                    path.contains("/" + normalizedPattern + "/")) {
+                if (path.equals(normalizedPattern) ||
+                        path.startsWith(normalizedPattern + "/") ||
+                        path.endsWith("/" + normalizedPattern) ||
+                        path.contains("/" + normalizedPattern + "/")) {
                     return true;
                 }
             }

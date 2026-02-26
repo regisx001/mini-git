@@ -1,11 +1,12 @@
 package com.regisx001.minigit.storage;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import java.nio.file.Path;
-import java.nio.file.Files;
 import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 public class IgnoreServiceTest {
 
@@ -18,12 +19,13 @@ public class IgnoreServiceTest {
             Files.writeString(ignoreFile, "/.git\ntarget/\n*.class\n");
             created = true;
         } else {
-            // If it exists, we can't easily test without modifying it, but let's assume it has /.git
+            // If it exists, we can't easily test without modifying it, but let's assume it
+            // has /.git
         }
 
         try {
             IgnoreService service = new IgnoreService();
-            
+
             // If we created it, we know the contents
             if (created) {
                 assertTrue(service.isIgnored(".git"));
@@ -31,7 +33,7 @@ public class IgnoreServiceTest {
                 assertTrue(service.isIgnored("target"));
                 assertTrue(service.isIgnored("target/classes/App.class"));
                 assertTrue(service.isIgnored("src/main/App.class"));
-                
+
                 assertFalse(service.isIgnored("src/main/App.java"));
                 assertFalse(service.isIgnored("README.md"));
             }
