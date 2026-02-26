@@ -1,18 +1,20 @@
 package com.regisx001.minigit.core.commands;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.io.IOException;
-import java.util.Map;
 
 import com.regisx001.minigit.core.Repository;
 import com.regisx001.minigit.core.RepositoryLoader;
 import com.regisx001.minigit.filesystem.FileSystemService;
 import com.regisx001.minigit.storage.Index;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class AddCommandTest {
 

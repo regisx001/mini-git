@@ -1,19 +1,21 @@
 package com.regisx001.minigit.core.commands;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.io.IOException;
-import java.util.Map;
 
 import com.regisx001.minigit.core.Repository;
 import com.regisx001.minigit.core.RepositoryLoader;
 import com.regisx001.minigit.filesystem.FileSystemService;
 import com.regisx001.minigit.storage.Index;
 import com.regisx001.minigit.storage.RefStore;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CommitCommandTest {
 
@@ -45,7 +47,8 @@ public class CommitCommandTest {
             String currentCommit = refs.readCurrentCommit();
 
             assertNotNull(currentCommit);
-            Path commitFile = repo.objectsDir().resolve(currentCommit.substring(0, 2)).resolve(currentCommit.substring(2));
+            Path commitFile = repo.objectsDir().resolve(currentCommit.substring(0, 2))
+                    .resolve(currentCommit.substring(2));
             assertTrue(Files.exists(commitFile));
 
             // Verify index is cleared
