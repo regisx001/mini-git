@@ -12,7 +12,7 @@ public class IgnoreService {
     private final Set<String> ignored = new HashSet<>();
 
     public IgnoreService() {
-        Path ignoreFile = Path.of(".minigitignore");
+        Path ignoreFile = Path.of(System.getProperty("user.dir"), ".minigitignore");
 
         if (Files.exists(ignoreFile)) {
             try {

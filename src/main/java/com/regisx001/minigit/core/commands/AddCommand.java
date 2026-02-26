@@ -34,7 +34,7 @@ public class AddCommand implements Command {
             Repository repo = new RepositoryLoader().load();
             FileSystemService fs = new FileSystemService();
 
-            byte[] content = Files.readAllBytes(Path.of(filePath));
+            byte[] content = Files.readAllBytes(Path.of(System.getProperty("user.dir"), filePath));
             Blob blob = new Blob(content);
 
             ObjectStore store = new ObjectStore(repo.objectsDir(), fs);

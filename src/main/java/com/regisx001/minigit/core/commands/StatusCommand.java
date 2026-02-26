@@ -43,7 +43,7 @@ public class StatusCommand implements Command {
             }
 
             Set<String> workingFiles = new HashSet<>();
-            collectWorkingFiles(Path.of("."), "", workingFiles);
+            collectWorkingFiles(Path.of(System.getProperty("user.dir")), "", workingFiles);
 
             System.out.println("Staged files:");
             indexEntries.keySet().forEach(f -> {
@@ -70,7 +70,10 @@ public class StatusCommand implements Command {
             Set<String> files,
             ObjectStore store) {
 
-        String treeText = new String(store.read(treeHash), StandardCharsets.UTF_8);
+        String raw = new String(store.read(treeHash), StandardCharsets.UTF_8);
+        // Strip the "tree <size>\0" header
+        int nullIndex = raw.indexOf('\0');
+        String treeText = (nullIndex >= 0) ? raw.substring(nullIndex + 1) : raw;
 
         for (String line : treeText.split("\n")) {
             if (line.isBlank())

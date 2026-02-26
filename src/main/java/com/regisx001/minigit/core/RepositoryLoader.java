@@ -6,7 +6,7 @@ import java.nio.file.Path;
 public class RepositoryLoader {
 
     public Repository load() {
-        Path root = Path.of(".minigit");
+        Path root = Path.of(System.getProperty("user.dir"), ".minigit");
 
         if (!Files.exists(root)) {
             throw new RuntimeException("Not a MiniGit repository.");

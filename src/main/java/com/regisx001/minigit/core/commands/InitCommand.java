@@ -12,7 +12,7 @@ public class InitCommand implements Command {
 
     @Override
     public void execute() {
-        Repository repo = new Repository(Path.of(".minigit"));
+        Repository repo = new Repository(Path.of(System.getProperty("user.dir"), ".minigit"));
 
         if (fs.exists(repo.root())) {
             throw new RuntimeException("MiniGit repository already exists.");
