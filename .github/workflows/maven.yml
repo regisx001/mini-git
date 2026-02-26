@@ -25,11 +25,8 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         cache: 'maven'
         
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-
     - name: Test with Maven
       run: mvn test --file pom.xml
-      
-    - name: Build Native Image
-      run: mvn -Pnative native:compile --file pom.xml
+
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
