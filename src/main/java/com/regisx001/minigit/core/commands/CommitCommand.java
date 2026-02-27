@@ -48,6 +48,16 @@ public class CommitCommand implements Command {
         RefStore refs = new RefStore(repo, fs);
         String parent = refs.readCurrentCommit();
 
+        if (parent != null) {
+            String parentCommitText = new String(store.read(parent), java.nio.charset.StandardCharsets.UTF_8);
+
+            String parentTreeHash = parentCommitText.split("tree ")[1].split("\n")[0];
+
+            if (parentTreeHash.equals(rootTreeHash)) {
+                throw new RuntimeException("Nothing to commit (working tree clean)");
+            }
+        }
+
         Commit commit = new Commit(
                 rootTreeHash,
                 parent,
